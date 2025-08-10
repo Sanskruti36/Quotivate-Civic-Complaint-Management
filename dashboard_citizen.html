@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Citizen Dashboard</title>
+</head>
+<body>
+    <h2>Citizen Dashboard</h2>
+    <p>Welcome, Citizen!</p>
+
+    <ul>
+        <li><a href="{{ url_for('user.show_complaint_form') }}">📝 Submit Complaint</a></li>
+        <li><a href="{{ url_for('user.view_my_complaints') }}">📄 My Complaints</a></li>
+        <li><a href="/public-complaints">🌐 Public Complaints</a></li>
+        <li><a href="{{ url_for('user.complaint_heatmap') }}">🗺 Heat Map</a></li>
+
+    </ul>
+</body>
+</html>

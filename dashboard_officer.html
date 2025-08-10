@@ -1,0 +1,22 @@
+<!-- officer/dashboard_officer.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Officer Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <h2>👨‍✈ Officer Panel</h2>
+    <ul>
+        <li><a href="/officer/view-complaints">📬 View My Complaints</a></li>
+        <li><a href="/officer/performance">📊 My Performance Report</a></li>
+        <li><a href="/officer/complaint-heatmap">🗺 Complaint Heatmap</a></li>
+        <li><a href="/logout">🔐 Logout</a></li>
+    </ul>
+
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

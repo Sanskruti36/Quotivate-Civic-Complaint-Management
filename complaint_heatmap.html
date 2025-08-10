@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>My Complaint Heatmap</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body { margin: 0; padding: 0; }
+        #controls {
+            position: absolute;
+            top: 10px; left: 10px;
+            background: white;
+            padding: 10px;
+            z-index: 1000;
+            box-shadow: 0 0 5px rgba(0,0,0,0.4);
+        }
+        #map { height: 100vh; width: 100vw; }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <label>Status:
+            <select id="statusFilter">
+                <option value="all">All</option>
+                <option value="New">New</option>
+                <option value="Assigned">Assigned</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Escalated">Escalated</option>
+                <option value="Closed">Closed</option>
+            </select>
+        </label>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+    <script>
+        const map = L.map('map').setView([18.5204, 73.8567], 11); // Pune default
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        let heat, markers = [];
+
+        function fetchHeatmap() {
+            const status = document.getElementById('statusFilter').value;
+
+            fetch(`/officer/api/complaint-heatmap?status=${status}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (heat) map.removeLayer(heat);
+                    markers.forEach(m => map.removeLayer(m));
+                    markers = [];
+
+                    const heatData = data.map(c => [c.latitude, c.longitude, c.intensity]);
+
+                    heat = L.heatLayer(heatData, {
+                        radius: 30,
+                        blur: 20,
+                        maxZoom: 16,
+                        minOpacity: 0.4,
+                        gradient: {
+                            0.2: 'blue',
+                            0.4: 'lime',
+                            0.6: 'orange',
+                            1.0: 'red'
+                        }
+                    }).addTo(map);
+
+                    data.forEach(c => {
+                        const marker = L.circleMarker([c.latitude, c.longitude], {
+                            radius: 6,
+                            fillColor: '#000',
+                            fillOpacity: 0.0,
+                            stroke: false
+                        }).addTo(map);
+
+                        marker.bindPopup(`
+                            <b>🆔 Complaint ID:</b> ${c.complaint_id}<br>
+                            <b>📍 City:</b> ${c.city_name}<br>
+                            <b>🏘 Zone:</b> ${c.zone_name}<br>
+                            <b>🚩 Issue:</b> ${c.issue_name}<br>
+                            <b>📅 Date:</b> ${c.created_at}<br>
+                            <b>📌 Status:</b> ${c.status}
+                        `);
+
+                        markers.push(marker);
+                    });
+                });
+        }
+
+        document.getElementById("statusFilter").addEventListener("change", fetchHeatmap);
+
+        fetchHeatmap();  // Initial load
+    </script>
+</body>
+</html>

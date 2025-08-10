@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>🌐 Public Complaints</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        img {
+            max-width: 80px;
+            cursor: pointer;
+        }
+        .comment-box {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+        .comment-entry {
+            margin-bottom: 8px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 5px;
+        }
+        .toggle-comments {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        textarea {
+            width: 100%;
+        }
+    </style>
+    <script>
+        function toggleComments(id) {
+            const section = document.getElementById('comments-' + id);
+            if (section.style.display === 'none') {
+                section.style.display = 'table-row';
+            } else {
+                section.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>🌐 Public Complaints</h1>
+    <a href="{{ url_for('user.citizen_dashboard') }}">⬅ Back to Dashboard</a>
+
+    <form method="GET">
+        <label>🏙️ City:</label>
+        <select name="city_id">
+            <option value="">-- All --</option>
+            {% for city in cities %}
+                <option value="{{ city.city_id }}" {% if city.city_id|string == selected_city %}selected{% endif %}>{{ city.city_name }}</option>
+            {% endfor %}
+        </select>
+
+        <label>🛠️ Issue Type:</label>
+        <select name="issue_type_id">
+            <option value="">-- All --</option>
+            {% for issue in issues %}
+                <option value="{{ issue.issue_type_id }}" {% if issue.issue_type_id|string == selected_issue %}selected{% endif %}>{{ issue.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">🔍 Filter</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Issue</th>
+                <th>Description</th>
+                <th>City</th>
+                <th>Zone</th>
+                <th>Status</th>
+                <th>Photo</th>
+                <th>Assigned Officer</th>
+                <th>Date</th>
+                <th>💬 View Comments</th>
+                <th>➕ Add Comment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in complaints %}
+            <tr>
+                <td>{{ c.complaint_id }}</td>
+                <td>{{ c.issue_name }}</td>
+                <td>{{ c.description }}</td>
+                <td>{{ c.city_name }}</td>
+                <td>{{ c.zone_name }}</td>
+                <td>{{ c.status }}</td>
+                <td>
+                    {% if c.photo_path %}
+                        <a href="{{ url_for('static', filename=c.photo_path.split('static/')[-1]) }}" target="_blank">
+                            <img src="{{ url_for('static', filename=c.photo_path.split('static/')[-1]) }}">
+                        </a>
+                    {% else %}
+                        No Photo
+                    {% endif %}
+                </td>
+                <td>
+                    {% if c.officer_name %}
+                        ✅ Assigned
+                    {% else %}
+                        ❌ Not Assigned
+                    {% endif %}
+                </td>
+                <td>{{ c.created_at }}</td>
+                <td>
+                    <span class="toggle-comments" onclick="toggleComments({{ c.complaint_id }})">💬 View</span>
+                </td>
+                <td>
+                    <form method="POST" action="{{ url_for('user.add_comment_public', complaint_id=c.complaint_id) }}">
+                        <textarea name="comment" rows="2" placeholder="Add your comment..." required></textarea>
+                        <button type="submit">➕ Add</button>
+                    </form>
+                </td>
+            </tr>
+
+            <tr id="comments-{{ c.complaint_id }}" style="display: none;">
+                <td colspan="11">
+                    <div class="comment-box">
+                        <strong>🗨️ Comments:</strong>
+                        <div>
+                            {% if c.comments %}
+                                {% for comment in c.comments %}
+                                    <div class="comment-entry">
+                                        <strong>{{ comment.user_name }}</strong>
+                                        <em>{{ comment.created_at }}</em><br>
+                                        {{ comment.comment }}
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <em>No comments yet.</em>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

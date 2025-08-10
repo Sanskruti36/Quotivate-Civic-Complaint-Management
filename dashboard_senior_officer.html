@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Senior Officer Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>👨‍💼 Senior Officer Panel</h2>
+        <ul>
+            <!-- 1. Analytics -->
+            <li><a href="/senior/analytics">📊 View Analytics</a></li>
+
+            <!-- 2. All Complaints -->
+            <li><a href="/senior/all-complaints">📋 View All Complaints</a></li>
+
+            <!-- 3. Heatmap -->
+            <li><a href="/senior/complaint-heatmap">🌡 Complaint Heatmap</a></li>
+
+            <!-- 4. Escalated Complaints Handling -->
+            <li><a href="/senior/escalated-complaints">🚨 View Escalated Complaints</a></li>
+            <!-- That page will include buttons:
+                    👁 View Full Complaint
+                    📜 View Timeline (logs)
+                    💬 View Comments
+                    ⚠ Send Final Warning
+            -->
+
+            <!-- 5. Complaint Types Management -->
+            <li><a href="/senior/complaint-types">🛠 Manage Complaint Types</a></li>
+            <!-- Add + Edit from same page -->
+
+            <!-- 6. SLA Management -->
+            <li><a href="/senior/sla-config">⏱ Edit SLA Configuration</a></li>
+
+            <!-- Logout -->
+            <li><a href="/logout">🔐 Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h2>Welcome, Senior Officer!</h2>
+        <p>Select an option from the sidebar to begin overseeing escalations and system performance.</p>
+    </div>
+</body>
+</html>

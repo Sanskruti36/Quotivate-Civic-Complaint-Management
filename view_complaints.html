@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assigned Complaints</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            margin-right: 20px;
+        }
+        select {
+            padding: 5px;
+        }
+        .complaint-card {
+            border: 1px solid #ccc;
+            border-left: 5px solid #007BFF;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .complaint-card img {
+            max-width: 200px;
+            margin-top: 10px;
+        }
+        .actions a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+
+<h2>📬 Assigned Complaints</h2>
+
+<form method="get">
+    <label>Status:
+        <select name="status">
+            <option value="all" {% if request.args.get('status') == 'all' %}selected{% endif %}>All</option>
+            <option value="Pending" {% if request.args.get('status') == 'Pending' %}selected{% endif %}>Pending</option>
+            <option value="In Progress" {% if request.args.get('status') == 'In Progress' %}selected{% endif %}>In Progress</option>
+            <option value="Resolved" {% if request.args.get('status') == 'Resolved' %}selected{% endif %}>Resolved</option>
+        </select>
+    </label>
+
+    <label>City:
+        <select name="city_id">
+            <option value="">All</option>
+            {% for city in cities %}
+                <option value="{{ city.city_id }}" {% if request.args.get('city_id') == city.city_id|string %}selected{% endif %}>{{ city.city_name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>Issue Type:
+        <select name="issue_type_id">
+            <option value="">All</option>
+            {% for issue in issues %}
+                <option value="{{ issue.issue_type_id }}" {% if request.args.get('issue_type_id') == issue.issue_type_id|string %}selected{% endif %}>{{ issue.name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <button type="submit">Apply Filters</button>
+</form>
+
+<hr>
+
+{% if complaints %}
+    {% for complaint in complaints %}
+        <div class="complaint-card">
+            <strong>Status:</strong> {{ complaint.status }} <br>
+            <strong>City:</strong> {{ complaint.city_name }} <br>
+            <strong>Zone:</strong> {{ complaint.zone_name }} <br>
+            <strong>Issue:</strong> {{ complaint.issue_name }} <br>
+            <strong>Description:</strong> {{ complaint.description }} <br>
+            <strong>Date:</strong> {{ complaint.created_at }} <br>
+
+            {% if complaint.photo_path %}
+                <img src="/{{ complaint.photo_path }}" alt="Complaint Image">
+            {% endif %}
+
+            <div class="actions">
+                <a href="/officer/update-status/{{ complaint.complaint_id }}">Update Status</a>
+                <a href="/officer/view-comments/{{ complaint.complaint_id }}">View Comments</a>
+                <a href="/officer/view-timeline/{{ complaint.complaint_id }}">View Timeline</a>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No complaints found.</p>
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!-- templates/officer/view_comments.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Comments</title>
+</head>
+<body>
+    <h1>👨‍✈️ Officer Panel</h1>
+    <nav>
+        📬 <a href="/officer/view-complaints">View My Complaints</a> |
+        📊 <a href="/officer/performance">My Performance Report</a> |
+        🗺 <a href="/officer/heatmap">Complaint Heatmap</a> |
+        🔐 <a href="/logout">Logout</a>
+    </nav>
+    <hr>
+
+    <h2>💬 Comments for Complaint #{{ complaint_id }}</h2>
+
+    {% if comments %}
+        {% for comment in comments %}
+            <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                <strong>User:</strong> {{ comment.user_name }}<br>
+                <strong>Comment:</strong> {{ comment.comment }}<br>
+                <strong>Date:</strong> {{ comment.created_at }}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No comments yet for this complaint.</p>
+    {% endif %}
+
+    <br>
+    <a href="/officer/view-complaints">🔙 Back</a>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submit Complaint</title>
+
+    <!-- ✅ Leaflet CSS (without integrity to avoid blocking) -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <!-- ✅ Leaflet JS (without integrity) -->
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    ></script>
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-bottom: 10px;
+            border: 2px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h2>📝 Submit Complaint</h2>
+
+    <form action="/submit-complaint" method="POST" enctype="multipart/form-data">
+
+        <!-- ✅ Issue Type Dropdown (Dynamic) -->
+        <label><strong>Issue Type:</strong></label>
+        <select name="issue_type_id" required>
+            {% for issue in issue_types %}
+                <option value="{{ issue.issue_type_id }}">{{ issue.name }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <!-- Description -->
+        <label><strong>Description:</strong></label><br>
+        <textarea name="description" rows="4" cols="50" required></textarea><br><br>
+
+        <!-- Upload Photo -->
+        <label><strong>Upload Photo (optional):</strong></label>
+        <input type="file" name="photo"><br><br>
+
+        <!-- Map -->
+        <label><strong>Select Location on Map:</strong></label>
+        <div id="map"></div>
+
+        <!-- Hidden Inputs to store map data -->
+        <input type="hidden" name="latitude" id="latitude">
+        <input type="hidden" name="longitude" id="longitude">
+        <input type="hidden" name="zone_id" id="zone_id">
+        <input type="hidden" name="city_id" id="city_id">
+
+        <!-- Info Display -->
+        <p><strong>📍 Lat:</strong> <span id="lat_display">-</span> | <strong>Lng:</strong> <span id="lng_display">-</span></p>
+        <p><strong>🏙️ City ID:</strong> <span id="city_display">-</span></p>
+        <p><strong>🧭 Zone ID:</strong> <span id="zone_display">-</span></p>
+
+        <!-- Submit -->
+        <button type="submit">🚀 Submit Complaint</button>
+    </form>
+
+    <!-- ✅ Map Interaction Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const map = L.map('map').setView([18.5204, 73.8567], 12); // Pune default
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            let marker;
+
+            map.on('click', function (e) {
+                const lat = e.latlng.lat.toFixed(6);
+                const lng = e.latlng.lng.toFixed(6);
+
+                if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng).addTo(map);
+                }
+
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+                document.getElementById('lat_display').textContent = lat;
+                document.getElementById('lng_display').textContent = lng;
+
+                fetch(`/detect-location?lat=${lat}&lng=${lng}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.zone_id && data.city_id) {
+                            document.getElementById('zone_id').value = data.zone_id;
+                            document.getElementById('city_id').value = data.city_id;
+                            document.getElementById('zone_display').textContent = data.zone_id;
+                            document.getElementById('city_display').textContent = data.city_id;
+                        } else {
+                            alert("❌ No matching zone found.");
+                            document.getElementById('zone_id').value = '';
+                            document.getElementById('city_id').value = '';
+                            document.getElementById('zone_display').textContent = '-';
+                            document.getElementById('city_display').textContent = '-';
+                        }
+                    })
+                    .catch(err => {
+                        alert("❌ Failed to detect location.");
+                        console.error(err);
+                    });
+            });
+        });
+    </script>
+</body>
+</html>

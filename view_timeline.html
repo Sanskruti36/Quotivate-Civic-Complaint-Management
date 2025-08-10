@@ -1,0 +1,25 @@
+<h2>🕒 Complaint Timeline – #{{ complaint_id }}</h2>
+
+<ul>
+{% for log in logs %}
+    <li>
+        <strong>{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</strong><br>
+
+        {% if log.officer_name %}
+            👮 Officer: {{ log.officer_name }}
+        {% elif log.user_name %}
+            🙋‍♂ Citizen: {{ log.user_name }}
+        {% elif log.admin_name %}
+            🛠 Admin: {{ log.admin_name }}
+        {% else %}
+            👤 Unknown User
+        {% endif %}<br>
+
+        🔄 Status: <strong>{{ log.old_status }}</strong> → <strong>{{ log.new_status }}</strong><br>
+        📝 Remarks: {{ log.remarks or 'No remarks' }}
+        <hr>
+    </li>
+{% endfor %}
+</ul>
+
+<a href="/officer/view-complaints">← Back to Complaints</a>

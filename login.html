@@ -1,0 +1,19 @@
+<!-- app/templates/login.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Quotivate</title>
+</head>
+<body>
+    <h2>Login to Quotivate</h2>
+
+    <!-- ✅ Fixed: Added action="/login" to ensure it POSTs to the correct route -->
+    <form method="post" action="/login">
+        <input name="email" placeholder="Email" required><br>
+        <input name="password" type="password" placeholder="Password" required><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <p>Don't have an account? <a href="/register">Register</a></p>
+</body>
+</html>

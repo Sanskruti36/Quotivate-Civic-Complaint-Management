@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Comment</title>
+</head>
+<body>
+    <h1>👤 Citizen Panel</h1>
+    <nav>
+        📝 <a href="/user/my-complaints">My Complaints</a> |
+        📊 <a href="/user/status">Check Status</a> |
+        🔐 <a href="/logout">Logout</a>
+    </nav>
+    <hr>
+
+    <h2>💬 Add Comment to Complaint #{{ complaint_id }}</h2>
+
+    <form method="POST">
+        <textarea name="comment" rows="5" cols="50" required placeholder="Write your comment here..."></textarea><br><br>
+        <button type="submit">➕ Add Comment</button>
+        <a href="/user/my-complaints">🔙 Back</a>
+    </form>
+</body>
+</html>
