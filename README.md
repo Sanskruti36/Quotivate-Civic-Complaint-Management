@@ -9,7 +9,7 @@ It connects **citizens**, **officers**, **senior officers**, and **administrator
 
 - **Citizen Module** – File complaints, attach images, pin locations on Google Maps, track complaint status.
 - **Officer Module** – View assigned complaints, update progress, mark resolution.
-- **Senior Officer Module** – Monitor escalations, reassign complaints, oversee city-wide progress.
+- **Senior Officer Module** – Reassign complaints, oversee city-wide progress.
 - **Admin Module** – Manage users, cities, zones, complaint types, and system settings.
 - **Auto-Assignment Logic** – Assigns complaints automatically based on:
   - City
